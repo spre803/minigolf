@@ -36,10 +36,14 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\BallStroke.cs" />
-     <None Include="Assets\Materials &amp; Textures\Ball.shader" />
-     <None Include="Assets\Materials &amp; Textures\Hole.shader" />
-     <None Include="Assets\Materials &amp; Textures\DepthMask.shader" />
+     <Compile Include="Assets\Ball.cs" />
+     <Compile Include="Assets\FakeHoleProject\Scripts\ChangeBallLayer.cs" />
+     <Compile Include="Assets\StrokeManager.cs" />
+     <Compile Include="Assets\UnCapPhysicsSpeed.cs" />
+     <None Include="Assets\FakeHoleProject\README.txt" />
+     <None Include="Assets\FakeHoleProject\Materials &amp; Textures\Ball.shader" />
+     <None Include="Assets\FakeHoleProject\Materials &amp; Textures\Hole.shader" />
+     <None Include="Assets\FakeHoleProject\Materials &amp; Textures\DepthMask.shader" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.13f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
