@@ -10,6 +10,9 @@ public class StrokeManager : MonoBehaviour
         FindPlayerBall();
     }
 
+
+    public float StrokeAngle { get; protected set; }
+
     Rigidbody playerBallRB;
     bool doWhack = false;
 
@@ -33,10 +36,14 @@ public class StrokeManager : MonoBehaviour
     // Update is called once per visual frame -- this for inputs
     private void Update()
     {
-        if(Input.GetKeyUp(KeyCode.Space))
+        if(Input.GetButton("Fire"))
         {
             doWhack = true;
         }
+
+        //update angle
+        StrokeAngle += Input.GetAxis("Horizontal") * 100f * Time.deltaTime;
+        
     }
 
     // FixedUpdate runs on every tick of the physics engine, use this for manipulation
@@ -53,8 +60,8 @@ public class StrokeManager : MonoBehaviour
         {
             doWhack = false;
             //Whack dat ball bruh
-            Vector3 forceVec = new Vector3(0, 0, 10f);
-            playerBallRB.AddForce(forceVec, ForceMode.Impulse);
+            Vector3 forceVec = new Vector3(0, 0, 2f);
+            playerBallRB.AddForce(Quaternion.Euler(0, StrokeAngle, 0) * forceVec, ForceMode.Impulse);
         }
     }
 }

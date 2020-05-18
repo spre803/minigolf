@@ -38,6 +38,7 @@
   <ItemGroup>
      <Compile Include="Assets\Ball.cs" />
      <Compile Include="Assets\FakeHoleProject\Scripts\ChangeBallLayer.cs" />
+     <Compile Include="Assets\StrokeAngleIndicator.cs" />
      <Compile Include="Assets\StrokeManager.cs" />
      <Compile Include="Assets\UnCapPhysicsSpeed.cs" />
      <None Include="Assets\FakeHoleProject\README.txt" />
