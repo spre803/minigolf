@@ -8,13 +8,31 @@ public class StrokeManager : MonoBehaviour
     void Start()
     {
         FindPlayerBall();
+        StrokeCount = 1;
     }
 
 
     public float StrokeAngle { get; protected set; }
 
+    public float StrokeForce { get; protected set; }
+    public float StrokeForcePerc {get {return StrokeForce / MaxStrokeForce; } }
+
+    public int StrokeCount {get; protected set;}
+
+    float StrokeForceFillSpeed = 20f;
+    int fillDir = 1;
+    float MaxStrokeForce = 30f;
+
+    public enum StrokeModeEnum { 
+        AIMING,
+        FILLING,
+        BALL_IS_ROLLING,
+        DO_WHACK
+    };
+
+    public StrokeModeEnum StrokeMode { get; protected set;}
+
     Rigidbody playerBallRB;
-    bool doWhack = false;
 
 
     private void FindPlayerBall()
@@ -36,32 +54,75 @@ public class StrokeManager : MonoBehaviour
     // Update is called once per visual frame -- this for inputs
     private void Update()
     {
-        if(Input.GetButton("Fire"))
+        if(StrokeMode == StrokeModeEnum.AIMING)
         {
-            doWhack = true;
+            StrokeAngle += Input.GetAxis("Horizontal") * 100f * Time.deltaTime;
+
+            if(Input.GetButtonUp("Fire"))
+            {
+                StrokeMode = StrokeModeEnum.FILLING;
+                return;
+            }
         }
 
-        //update angle
-        StrokeAngle += Input.GetAxis("Horizontal") * 100f * Time.deltaTime;
+        if(StrokeMode == StrokeModeEnum.FILLING)
+        {
+            StrokeForce += (StrokeForceFillSpeed * fillDir) * Time.deltaTime;
+            if(StrokeForce > MaxStrokeForce)
+            {
+                StrokeForce = MaxStrokeForce;
+                fillDir = -1;
+            }
+            else if (StrokeForce < 0)
+            {
+                StrokeForce = 0;
+                fillDir = 1;
+            }
+
+            if(Input.GetButtonUp("Fire"))
+            {
+                StrokeMode = StrokeModeEnum.DO_WHACK;
+            }
+        }
         
+    }
+
+    void CheckRollingStatus()
+    {
+        if(playerBallRB.IsSleeping())
+        {
+            StrokeCount++; //TODO: Unless we scored?
+            StrokeMode = StrokeModeEnum.AIMING;
+        }
     }
 
     // FixedUpdate runs on every tick of the physics engine, use this for manipulation
     void FixedUpdate()
     {
-
         if(playerBallRB == null)
         {
             // might not be an error -- maybe the ball fell out of bounds, got deleted, and hasnt returned yet
             return;
         }
 
-        if(doWhack == true)
+        if(StrokeMode == StrokeModeEnum.BALL_IS_ROLLING)
         {
-            doWhack = false;
-            //Whack dat ball bruh
-            Vector3 forceVec = new Vector3(0, 0, 2f);
-            playerBallRB.AddForce(Quaternion.Euler(0, StrokeAngle, 0) * forceVec, ForceMode.Impulse);
+            CheckRollingStatus();
+            return;
         }
+
+        if(StrokeMode != StrokeModeEnum.DO_WHACK)
+        {
+            //nothing to do but wait for it to stop
+            return;
+        }
+
+        
+        //Whack dat ball bruh
+        Vector3 forceVec = new Vector3(0, 0, StrokeForce);
+        playerBallRB.AddForce(Quaternion.Euler(0, StrokeAngle, 0) * forceVec, ForceMode.Impulse);
+        StrokeForce = 0;
+        StrokeMode = StrokeModeEnum.BALL_IS_ROLLING;
+        
     }
 }
